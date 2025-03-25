@@ -52,6 +52,7 @@ async def handle_dialogflow(request: DialogflowRequest):
     intent = request.queryResult["intent"]["displayName"]
     parameters = request.queryResult.get("parameters", {})
     topic = parameters.get("topic", "").lower()
+    exinfo = parameters.get("extra_info", "").lower()
     person = parameters.get("person", None)
     
     if intent == "Generate_math_quiz":
@@ -74,6 +75,12 @@ async def handle_dialogflow(request: DialogflowRequest):
     elif intent == "Explain_Topic":
         response1 = client.models.generate_content(
             model="gemini-2.0-flash", contents=f"Explain the {topic} in 100-150 words. Also begin as Here's The explaination of {topic}"
+        )
+        response_text = response1.text
+    
+    elif intent == "Extra_info":
+        response1 = client.models.generate_content(
+            model="gemini-2.0-flash", contents=f"{exinfo}"
         )
         response_text = response1.text
 
